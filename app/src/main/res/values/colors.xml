@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryColor">#7CB342</color>
+    <color name="onPrimaryColor">#0A1B00</color>
+    <color name="secondaryColor">#4DD0E1</color>
+    <color name="onSecondaryColor">#002022</color>
+    <color name="surfaceColor">#F5F7F2</color>
+    <color name="surfaceVariantColor">#E4EBDD</color>
+    <color name="onSurfaceColor">#0F1C0F</color>
+    <color name="backgroundColor">#EEF3E6</color>
+    <color name="onBackgroundColor">#0F1C0F</color>
+
+    <!-- Exchange rate intensity backgrounds -->
+    <color name="rateBelowOneBackground">#E5F5EC</color>
+    <color name="rateOneToFiveBackground">#E6F0FF</color>
+    <color name="rateFiveToTenBackground">#FFF3E0</color>
+    <color name="rateAboveTenBackground">#FCE9EC</color>
+    <color name="rateUnknownBackground">#ECEFF1</color>
+</resources>

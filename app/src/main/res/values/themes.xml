@@ -1,0 +1,16 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Rushe_Paul_S2339378" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorOnPrimary">@color/onPrimaryColor</item>
+        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorOnSecondary">@color/onSecondaryColor</item>
+        <item name="colorSurface">@color/surfaceColor</item>
+        <item name="colorSurfaceVariant">@color/surfaceVariantColor</item>
+        <item name="colorOnSurface">@color/onSurfaceColor</item>
+        <item name="colorBackground">@color/backgroundColor</item>
+        <item name="colorOnBackground">@color/onBackgroundColor</item>
+    </style>
+
+    <style name="Theme.Rushe_Paul_S2339378" parent="Base.Theme.Rushe_Paul_S2339378" />
+</resources>
