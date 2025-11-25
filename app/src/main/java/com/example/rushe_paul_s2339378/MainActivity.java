@@ -50,12 +50,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MainActivity extends AppCompatActivity implements OnClickListener, CurrencyAdapter.OnCurrencyClickListener {
+    // A few quick handles for the UI bits we poke
     private TextView rawDataDisplay;
     private MaterialButton startButton;
     private EditText searchInput;
     private RecyclerView currencyRecyclerView;
     private CurrencyAdapter currencyAdapter;
     private String result;
+    // keeping track of where we grab the feed from
     private String url1="";
     private String urlSource="https://www.fx-exchange.com/gbp/rss.xml";
     private List<Thing> things = new ArrayList<>();
@@ -91,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 if (currencyAdapter != null) {
+                    // simple filtering as the user types
                     currencyAdapter.filter(s.toString());
                 }
             }
@@ -103,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
         // More Code goes here
 
+        // start the auto refresh loop when the screen is made
         startAutoRefresh();
 
     }
@@ -124,16 +128,19 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     public void startProgress()
     {
+        // kick off the network work on a background thread
         submitDownload();
     } //
 
     private void submitDownload() {
         synchronized (downloadLock) {
             if (ongoingDownload != null && !ongoingDownload.isDone()) {
+                // already downloading, so don't double up
                 return;
             }
 
             if (downloadExecutor == null || downloadExecutor.isShutdown()) {
+                // lazy create the executor when we need it
                 downloadExecutor = Executors.newSingleThreadExecutor();
             }
 
@@ -143,14 +150,17 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     private void startAutoRefresh() {
         if (autoRefreshStarted && refreshExecutor != null && !refreshExecutor.isShutdown()) {
+            // auto refresh is already running
             return;
         }
         if (refreshExecutor == null || refreshExecutor.isShutdown()) {
+            // single thread to run the repeat job
             refreshExecutor = Executors.newSingleThreadScheduledExecutor();
         }
         refreshExecutor.scheduleAtFixedRate(new Runnable() {
             @Override
             public void run() {
+                // every interval we ask for new data
                 submitDownload();
             }
         }, 0, REFRESH_INTERVAL_MINUTES, TimeUnit.MINUTES);
@@ -168,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     @Override
     protected void onResume() {
         super.onResume();
+        // hop back into auto refresh when we return to the screen
         startAutoRefresh();
     }
 
@@ -181,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
     protected void onDestroy() {
         stopAutoRefresh();
         if (downloadExecutor != null) {
+            // stop any leftover background work
             downloadExecutor.shutdownNow();
         }
         super.onDestroy();
@@ -198,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         }
 
         private String cleanTitle(String rawTitle) {
+            // trim out the GBP prefix so the list reads nicer
             if (rawTitle == null) {
                 return "";
             }
@@ -205,6 +218,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         }
 
         private String cleanDescription(String rawDescription) {
+            // strip the long sentence down to just the number
             if (rawDescription == null) {
                 return "";
             }

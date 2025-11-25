@@ -18,6 +18,7 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter.Curren
         void onCurrencyClick(Thing thing);
     }
 
+    // keep both the raw list and the filtered view handy
     private final List<Thing> currencies = new ArrayList<>();
     private final List<Thing> filteredCurrencies = new ArrayList<>();
     private final OnCurrencyClickListener listener;
@@ -79,6 +80,7 @@ public class CurrencyAdapter extends RecyclerView.Adapter<CurrencyAdapter.Curren
         }
 
         void bind(final Thing thing, final OnCurrencyClickListener listener) {
+            // quick grab of the bits we show
             String currencyCode = thing.getCurrencyCode();
             String rateText = thing.getDescription();
 

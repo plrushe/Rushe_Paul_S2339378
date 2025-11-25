@@ -6,6 +6,7 @@ public class Thing {
     private String pubDate;
 
     public String getCurrencyCode() {
+        // quick attempt to pull the code out of the brackets
         if (title == null) {
             return "";
         }
@@ -24,6 +25,7 @@ public class Thing {
     }
 
     public void setTitle(String title) {
+        // setter kept simple
         this.title = title;
     }
 
@@ -32,6 +34,7 @@ public class Thing {
     }
 
     public void setDescription(String description) {
+        // stash the rate text
         this.description = description;
     }
 
@@ -40,11 +43,13 @@ public class Thing {
     }
 
     public void setPubDate(String pubDate) {
+        // save the publish date as-is
         this.pubDate = pubDate;
     }
 
     @Override
     public String toString() {
+        // handy for logging
         return "Thing{" +
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
