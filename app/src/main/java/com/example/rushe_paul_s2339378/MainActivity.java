@@ -16,18 +16,14 @@ package com.example.rushe_paul_s2339378;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View.OnClickListener;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import com.google.android.material.button.MaterialButton;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -40,6 +36,8 @@ import java.io.StringReader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -49,13 +47,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MainActivity extends AppCompatActivity implements OnClickListener, CurrencyAdapter.OnCurrencyClickListener {
+public class MainActivity extends AppCompatActivity implements CurrencyAdapter.OnCurrencyClickListener {
     // A few quick handles for the UI bits we poke
     private TextView rawDataDisplay;
-    private MaterialButton startButton;
     private EditText searchInput;
     private RecyclerView currencyRecyclerView;
     private CurrencyAdapter currencyAdapter;
+    private RecyclerView featuredRatesRecyclerView;
+    private FeaturedCurrencyAdapter featuredCurrencyAdapter;
     private String result;
     // keeping track of where we grab the feed from
     private String url1="";
@@ -74,8 +73,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         setContentView(R.layout.activity_main);
         // Set up the raw links to the graphical components
         rawDataDisplay = (TextView)findViewById(R.id.rawDataDisplay);
-        startButton = (MaterialButton)findViewById(R.id.startButton);
-        startButton.setOnClickListener(this);
 
         searchInput = findViewById(R.id.searchInput);
 
@@ -83,6 +80,12 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         currencyAdapter = new CurrencyAdapter(this);
         currencyRecyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         currencyRecyclerView.setAdapter(currencyAdapter);
+
+        featuredRatesRecyclerView = findViewById(R.id.featuredRatesRecyclerView);
+        featuredCurrencyAdapter = new FeaturedCurrencyAdapter(this);
+        featuredRatesRecyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        featuredRatesRecyclerView.setAdapter(featuredCurrencyAdapter);
+        featuredRatesRecyclerView.setHasFixedSize(true);
 
         searchInput.addTextChangedListener(new TextWatcher() {
             @Override
@@ -111,11 +114,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
     }
 
-    public void onClick(View aview)
-    {
-        startProgress();
-    }
-
     @Override
     public void onCurrencyClick(Thing thing) {
         Intent intent = new Intent(this, CurrencyDetailActivity.class);
@@ -125,12 +123,6 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
         intent.putExtra("currencyCode", thing.getCurrencyCode());
         startActivity(intent);
     }
-
-    public void startProgress()
-    {
-        // kick off the network work on a background thread
-        submitDownload();
-    } //
 
     private void submitDownload() {
         synchronized (downloadLock) {
@@ -196,6 +188,35 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
             downloadExecutor.shutdownNow();
         }
         super.onDestroy();
+    }
+
+    private List<Thing> buildFeaturedCurrencies(List<Thing> allCurrencies) {
+        List<String> targetCodes = Arrays.asList("USD", "EUR", "JPY");
+        LinkedHashMap<String, Thing> selected = new LinkedHashMap<>();
+
+        if (allCurrencies != null) {
+            for (Thing thing : allCurrencies) {
+                if (thing == null) {
+                    continue;
+                }
+                String code = thing.getCurrencyCode();
+                if (code == null) {
+                    continue;
+                }
+                String normalizedCode = code.trim().toUpperCase();
+                if (targetCodes.contains(normalizedCode) && !selected.containsKey(normalizedCode)) {
+                    selected.put(normalizedCode, thing);
+                }
+            }
+        }
+
+        List<Thing> featuredList = new ArrayList<>();
+        for (String target : targetCodes) {
+            if (selected.containsKey(target)) {
+                featuredList.add(selected.get(target));
+            }
+        }
+        return featuredList;
     }
 
     // Need separate thread to access the internet resource over network
@@ -358,12 +379,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener, 
 
             final List<Thing> finalThings = new ArrayList<>(things);
             String finalDisplayText = displayText;
+            final List<Thing> featuredCurrencies = buildFeaturedCurrencies(finalThings);
             MainActivity.this.runOnUiThread(new Runnable()
             {
                 public void run() {
                     Log.d("UI thread", "I am the UI thread");
                     rawDataDisplay.setText(finalDisplayText);
                     currencyAdapter.updateData(finalThings);
+                    featuredCurrencyAdapter.updateData(featuredCurrencies);
                     if (searchInput != null) {
                         currencyAdapter.filter(searchInput.getText().toString());
                     }

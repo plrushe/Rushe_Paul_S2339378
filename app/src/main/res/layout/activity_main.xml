@@ -48,25 +48,6 @@
                     android:textColor="?attr/colorOnBackground"
                     android:text="Currency Explorer" />
 
-                <TextView
-                    android:layout_width="fill_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="6dp"
-                    android:textSize="16sp"
-                    android:textColor="?attr/colorOnBackground"
-                    android:text="Stay in sync with the latest FX updates and conversions." />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/startButton"
-                    style="@style/Widget.Material3.Button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="Fetch latest rates"
-                    app:icon="@android:drawable/stat_sys_download"
-                    app:iconPadding="8dp"
-                    app:iconTint="?attr/colorOnPrimary" />
-
                 <com.google.android.material.card.MaterialCardView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -101,6 +82,26 @@
                             android:textColor="?attr/colorOnSurface"
                             android:text="Tap fetch to retrieve the latest feed." />
                     </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="?attr/colorSurface"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="1dp"
+                    app:strokeColor="?attr/colorOutline"
+                    app:strokeWidth="1dp">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/featuredRatesRecyclerView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="120dp"
+                        android:padding="12dp"
+                        android:clipToPadding="false"
+                        android:overScrollMode="never" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <TextView
